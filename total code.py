@@ -86,3 +86,54 @@ for num_label in range(1,18):
         wl=np.absolute(wl)
         wl=np.sum(wl, axis=1)        
         data_WL[key_name]=wl 
+        
+        
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from torch.utils.data import TensorDataset
+from torch.utils.data import DataLoader
+torch.manual_seed(1)
+
+
+# x_train, y_train, y_train_one_hot data 만들기
+x_train=torch.Tensor([])
+y_train=torch.Tensor([])
+for num_label in range(1,18):                                                   
+    for num_rep in range(1,5):
+        key_name="L"+str(num_label)+"-"+str(num_rep)
+        mav=torch.tensor(data_MAV[key_name])
+        var=torch.tensor(data_VAR[key_name])
+        wl=torch.tensor(data_WL[key_name])
+        x_train_t1=torch.cat((mav,var,wl), dim=1)
+        x_train=torch.cat((x_train, x_train_t1), dim=0)
+        y_train_t1=torch.ones(x_train_t1.shape[0],1)*(num_label-1)
+        y_train=torch.cat((y_train, y_train_t1), dim=0)
+y_train=y_train.reshape((-1,))
+y_train=np.array(y_train)
+y_train=torch.LongTensor(y_train)
+y_train_one_hot=torch.zeros(y_train.shape[0],17)
+y_train_one_hot.scatter_(1,y_train.unsqueeze(1), 1) 
+
+
+
+# x_test, y_test, y_test_one_hot data 만들기
+x_test=torch.Tensor([])
+y_test=torch.Tensor([])
+for num_label in range(1,18):                                                   
+    for num_rep in range(5,7):
+        key_name="L"+str(num_label)+"-"+str(num_rep)
+        mav=torch.tensor(data_MAV[key_name])
+        var=torch.tensor(data_VAR[key_name])
+        wl=torch.tensor(data_WL[key_name])
+        x_test_t1=torch.cat((mav,var,wl), dim=1)
+        x_test=torch.cat((x_test, x_test_t1), dim=0)
+        y_test_t1=torch.ones(x_test_t1.shape[0],1)*(num_label-1)
+        y_test=torch.cat((y_test, y_test_t1), dim=0) 
+y_test=y_test.reshape((-1,))
+y_test=np.array(y_test)
+y_test=torch.LongTensor(y_test)
+y_test_one_hot=torch.zeros(y_test.shape[0],17)
+y_test_one_hot.scatter_(1,y_test.unsqueeze(1), 1) 
