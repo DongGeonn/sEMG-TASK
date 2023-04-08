@@ -137,3 +137,67 @@ y_test=np.array(y_test)
 y_test=torch.LongTensor(y_test)
 y_test_one_hot=torch.zeros(y_test.shape[0],17)
 y_test_one_hot.scatter_(1,y_test.unsqueeze(1), 1) 
+
+
+# 단층 퍼셉트론으로 분류
+model=nn.Sequential(nn.Linear(36,17))                                           
+optimizer=optim.SGD(model.parameters(), lr=1e-1)
+losses_36_17=[]
+nb_epochs=10000
+for epoch in range(nb_epochs+1):
+    hypothesis=model(x_train)
+    cost=F.cross_entropy(hypothesis, y_train)
+    optimizer.zero_grad()
+    cost.backward()
+    optimizer.step()
+    losses_36_17.append(cost.item())
+    if epoch%1000==0:
+        print('Epoch {}/{} Cost: {:.6f}'.format(epoch, nb_epochs, cost.item()))
+
+# train 정확도 측정
+with torch.no_grad():         
+    hypothesis=model(x_train)
+    correct_prediction = torch.argmax(hypothesis, 1) == y_train
+    accuracy = correct_prediction.float().mean()
+    print('Train Accuracy:', accuracy.item()*100)
+    
+# test 정확도 측정
+with torch.no_grad():         
+    hypothesis=model(x_test)
+    correct_prediction = torch.argmax(hypothesis, 1) == y_test
+    accuracy = correct_prediction.float().mean()
+    print('Test Accuracy:', accuracy.item()*100)
+    
+print("")
+
+
+# 다층 퍼셉트론으로 분류
+model=nn.Sequential(nn.Linear(36,50),nn.ReLU(), nn.Linear(50,50),nn.ReLU(),
+                    nn.Linear(50,50),nn.ReLU(), nn.Linear(50,17))              
+optimizer=optim.SGD(model.parameters(), lr=1e-1)
+losses_36_50_50_17=[]
+nb_epochs=10000
+for epoch in range(nb_epochs+1):
+    hypothesis=model(x_train)
+    cost=F.cross_entropy(hypothesis, y_train)
+    optimizer.zero_grad()
+    cost.backward()
+    optimizer.step()
+    losses_36_50_50_17.append(cost.item())
+    if epoch%1000==0:
+        print('Epoch {}/{} Cost: {:.6f}'.format(epoch, nb_epochs, cost.item()))
+        
+# train 정확도 측정
+with torch.no_grad():         
+    hypothesis=model(x_train)
+    correct_prediction = torch.argmax(hypothesis, 1) == y_train
+    accuracy = correct_prediction.float().mean()
+    print('Train Accuracy:', accuracy.item()*100)
+    
+# test 정확도 측정
+with torch.no_grad():         
+    hypothesis=model(x_test)
+    correct_prediction = torch.argmax(hypothesis, 1) == y_test
+    accuracy = correct_prediction.float().mean()
+    print('Test Accuracy:', accuracy.item()*100)  
+    
