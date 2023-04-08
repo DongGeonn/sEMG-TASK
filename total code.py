@@ -39,3 +39,14 @@ for num_label in range(1,18):
     for num_rep in range(1,7):
         key_name="L"+str(num_label)+"-"+str(num_rep)
         data_first[key_name]=np.array(data_first[key_name])
+        
+# data_second 딕셔너리 생성 & 입력        
+data_second={}
+for num_label in range(1,18):                                                          
+    for num_rep in range(1,7):
+        key_name="L"+str(num_label)+"-"+str(num_rep)
+        array=data_first[key_name]
+        len_array=(array.shape[0]//400)*400
+        array=array[:len_array,:]
+        array=array.reshape((-1,400,12))
+        data_second[key_name]=array
