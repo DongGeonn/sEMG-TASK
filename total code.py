@@ -50,3 +50,39 @@ for num_label in range(1,18):
         array=array[:len_array,:]
         array=array.reshape((-1,400,12))
         data_second[key_name]=array
+        
+# data_MAV 딕셔너리 생성 & 입력
+data_MAV={}
+for num_label in range(1,18):                                                   
+    for num_rep in range(1,7):
+        key_name="L"+str(num_label)+"-"+str(num_rep)
+        mav=data_second[key_name]
+        mav=np.absolute(mav)
+        mav=np.mean(mav, axis=1) 
+        data_MAV[key_name]=mav 
+        
+        
+# data_VAR 딕셔너리 생성 & 입력
+data_VAR={}
+for num_label in range(1,18):                                                   
+    for num_rep in range(1,7):
+        key_name="L"+str(num_label)+"-"+str(num_rep)
+        var=data_second[key_name]
+        var=var**2
+        var=np.sum(var, axis=1)
+        var=var/(400-1)
+        data_VAR[key_name]=var
+        
+        
+# data_WL 딕셔너리 생성 & 입력
+data_WL={}
+for num_label in range(1,18):                                                   
+    for num_rep in range(1,7):
+        key_name="L"+str(num_label)+"-"+str(num_rep)
+        wl=data_second[key_name]
+        wl1=wl[:,0:-1,:]
+        wl2=wl[:,1:,:]
+        wl=wl1-wl2
+        wl=np.absolute(wl)
+        wl=np.sum(wl, axis=1)        
+        data_WL[key_name]=wl 
